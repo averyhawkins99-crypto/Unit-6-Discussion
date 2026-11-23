@@ -1,0 +1,120 @@
+"""
+====================================================
+UNIT 6 DISCUSSION: Python Dictionaries as Hash Tables
+====================================================
+
+INSTRUCTIONS:
+In this activity, you will work with Python dictionaries
+to simulate the behavior of a hash table.
+
+You will modify the provided starter code to demonstrate
+common operations and explain key concepts.
+
+Follow all TODO prompts in the code and ensure your output
+clearly communicates what your program is doing at each step.
+
+----------------------------------------------------
+"""
+
+
+def main():
+    print("=== UNIT 6: DICTIONARIES AS HASH TABLES ===")
+
+    # ===============================
+    # CREATE A HASH TABLE
+    # ===============================
+    print("\n=== INSERT OPERATIONS ===")
+
+    # Create an empty dictionary to act as our hash table.
+    # Under the hood, Python allocates an initial array of memory "buckets" (slots).
+    student_grades = {}
+
+    # Insert at least 5 key-value pairs.
+    # When inserting, Python passes the key (e.g., "Alice") through a built-in
+    # hash() function to generate a unique integer hash code. That hash code is
+    # mapped to a specific index in the underlying array where the value is stored.
+    student_grades["Alice"] = 92
+    student_grades["Bob"] = 85
+    student_grades["Charlie"] = 78
+    student_grades["Diana"] = 95
+    student_grades["Evan"] = 88
+
+    print("Inserted 5 student records into the hash table.")
+    print("Current Hash Table:", student_grades)
+
+    # ===============================
+    # LOOKUP OPERATIONS
+    # ===============================
+    print("\n=== LOOKUP OPERATIONS ===")
+
+    # Retrieve two existing keys.
+    # Rather than searching through every item one by one (O(n) time), Python
+    # re-hashes the requested key to jump directly to its exact memory bucket.
+    # This gives dictionary lookups an average time complexity of O(1) (constant time).
+    alice_grade = student_grades["Alice"]
+    diana_grade = student_grades.get("Diana")
+
+    print(f"Lookup 'Alice': {alice_grade}")
+    print(f"Lookup 'Diana': {diana_grade}")
+
+    # ===============================
+    # UPDATE OPERATIONS
+    # ===============================
+    print("\n=== UPDATE OPERATIONS ===")
+    print("Before Update:", student_grades)
+
+    # Update the value for an existing key ("Bob").
+    # Because hash tables require unique keys, Python hashes "Bob", finds that the
+    # key already occupies that memory bucket, and overwrites the old value (85)
+    # with the new value (90) rather than creating a duplicate entry.
+    student_grades["Bob"] = 90
+
+    print("Updated 'Bob' from 85 to 90.")
+    print("After Update:", student_grades)
+
+    # ===============================
+    # DELETE OPERATIONS
+    # ===============================
+    print("\n=== DELETE OPERATIONS ===")
+    print("Before Deletion:", student_grades)
+
+    # Delete an existing key-value pair ("Charlie").
+    # Python hashes "Charlie" to locate its slot and removes the reference to both
+    # the key and value. Internally, Python leaves a "dummy" marker in that slot
+    # so that future hash collision probes don't break prematurely.
+    removed_grade = student_grades.pop("Charlie")
+
+    print(f"Removed 'Charlie' (Grade: {removed_grade}) from the hash table.")
+    print("After Deletion:", student_grades)
+
+    # ===============================
+    # EDGE CASES
+    # ===============================
+    print("\n=== EDGE CASES ===")
+
+    # Edge Case 1: Looking up a missing key
+    # Using standard bracket notation (student_grades["Zoe"]) on a missing key
+    # raises a KeyError because the hash points to an empty bucket.
+    # Using .get() handles this safely by returning None (or a custom default).
+    print("Edge Case 1 - Lookup missing key 'Zoe':")
+    missing_lookup = student_grades.get("Zoe", "Student not found")
+    print(f"Result using .get(): {missing_lookup}")
+
+    # Edge Case 2: Deleting a missing key safely
+    # Using `del student_grades["Zoe"]` would crash with a KeyError.
+    # Passing a second argument (default value) to .pop() prevents the crash
+    # and returns our fallback message instead.
+    print("\nEdge Case 2 - Delete missing key 'Zoe' safely:")
+    safe_delete = student_grades.pop("Zoe", "Key does not exist, nothing deleted")
+    print(f"Result using .pop() with default: {safe_delete}")
+
+    # Edge Case 3: Updating a missing key (Upsert behavior)
+    # Assigning a value to a key that doesn't exist yet does not cause an error;
+    # instead, the hash table treats it as a new insert operation.
+    print("\nEdge Case 3 - Updating a missing key 'Frank':")
+    student_grades["Frank"] = 91
+    print("After assigning 'Frank' = 91:", student_grades)
+
+
+if __name__ == "__main__":
+    main()
